@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const session = require("express-session")
 const mongoose = require('mongoose')
 const cors = require('cors')
 const fileUpload = require('express-fileupload')
@@ -31,6 +32,15 @@ else {
     const app = express()
     app.use(express.json())
     app.use(cookieParser())
+    app.use(
+        session({
+          secret: "secret",
+          rolling: true,
+          resave: false,
+          saveUninitialized: false,
+          cookie: { maxAge: 60000 },
+        })
+      )
     app.use(cors())
     app.use(fileUpload({
         useTempFiles: true
@@ -45,6 +55,9 @@ else {
     app.use('/api', require('./routes/categoryRouter'))
     app.use('/api', require('./routes/upload'))
     app.use('/api', require('./routes/productRouter'))
+    app.use('/api/cart', require('./routes/cartRouter'))
+    app.use('/api/order', require('./routes/orderRouter'))
+    app.use('/api/chat', require('./routes/messageRouter'))
 
     // Conexión a MongoDB
     const URI = process.env.MONGODB_URL

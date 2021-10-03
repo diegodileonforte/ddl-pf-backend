@@ -58,7 +58,7 @@ const productController = {
 
     createProduct: async (req, res) => {
         try {
-            const { product_id, title, price, description, content, images, category } = req.body
+            const { product_id, title, price, description, content, images, category, stock } = req.body
             if (!images) return res.status(400).json({ msg: "Imagen de producto no seleccionada." })
 
             const product = await Products.findOne({ product_id })
@@ -66,7 +66,7 @@ const productController = {
                 return res.status(400).json({ msg: "El producto ya existe." })
 
             const newProduct = new Products({
-                product_id, title: title.toLowerCase(), price, description, content, images, category
+                product_id, title: title.toLowerCase(), price, description, content, images, category, stock
             })
 
             await newProduct.save()
@@ -80,7 +80,7 @@ const productController = {
     deleteProduct: async (req, res) => {
         try {
             await Products.findByIdAndDelete(req.params.id)
-            res.json({ mgs: 'Producto eliminado con éxito.' })
+            res.json({ msg: 'Producto eliminado con éxito.' })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
@@ -88,10 +88,10 @@ const productController = {
 
     updateProduct: async (req, res) => {
         try {
-            const { title, price, description, content, images, category } = req.body
+            const { title, price, description, content, images, category, stock } = req.body
             if (!images) return res.status(400).json({ msg: "Imagen de producto no seleccionada." })
 
-            await Products.findByIdAndUpdate({ _id: req.params.id }, { title: title.toLowerCase(), price: price, description: description })
+            await Products.findByIdAndUpdate({ _id: req.params.id }, { title: title.toLowerCase(), price: price, description: description, content: content, category: category, stock: stock })
 
             res.json({ msg: 'Producto actualizado con éxito.' })
         } catch (err) {
